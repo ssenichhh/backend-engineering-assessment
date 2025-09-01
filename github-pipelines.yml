@@ -1,0 +1,27 @@
+# image: atlassian/default-image:4  # for additional steps
+
+pipelines:
+  pull-requests:
+    '**':
+      - step:
+          name: "Unit Tests"
+          image: python:3.12
+          caches:
+            - pip
+          script:
+            - pip install -r requirements.txt
+            - python quiz/manage.py test
+          services:
+            - postgres
+
+definitions:
+  caches:
+    pip: ~/.cache/pip
+
+  services:
+    postgres:
+      image: postgres:16.1-alpine
+      variables:
+        POSTGRES_DB: "test_pipeline"
+        POSTGRES_USER: "postgres"
+        POSTGRES_PASSWORD: "postgres"

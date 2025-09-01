@@ -1,0 +1,12 @@
+version: '3.5'
+
+services:
+  django-backend:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+        - '.:/usr/src:rw'
+    command: bash run_command.sh
+    env_file: .env
