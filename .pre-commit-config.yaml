@@ -1,6 +1,6 @@
 exclude: 'templates|static|migrations|venv|.git|.md|.pdf'
 default_language_version:
-    python: python3.12
+    python: python3.10
 default_stages: [commit]
 repos:
 -   repo: meta
