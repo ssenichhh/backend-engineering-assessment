@@ -34,7 +34,7 @@ jobs:
       - name: Install deps (Pipenv)
         run: |
           python -m pip install --upgrade pip pipenv
-          pipenv install --system --deploy --ignore-pipfile
+          pipenv install --system --deploy --ignore-pipfile --dev
 
       - name: Run Django tests
         env:
