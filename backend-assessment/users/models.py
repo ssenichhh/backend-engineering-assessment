@@ -1,14 +1,19 @@
 import uuid
 
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, update_last_login
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    PermissionsMixin,
+    update_last_login,
+)
 from django.db import models
 from rest_framework.exceptions import AuthenticationFailed, PermissionDenied
-
 from users.managers import UserManager
+
 
 class UserRole(models.TextChoices):
     OWNER = "OWNER", "Owner"
     PARTICIPANT = "PARTICIPANT", "Participant"
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -37,12 +42,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         if not self.is_active:
             raise PermissionDenied("User account is disabled.")
 
-        # Passwordless flow (e.g., SSN/DOB-style logins)
         if password is None:
             update_last_login(None, self)
             return self
 
-        # Email/password flow using the stored hash
         if not self.check_password(password):
             raise AuthenticationFailed("Invalid credentials.")
 

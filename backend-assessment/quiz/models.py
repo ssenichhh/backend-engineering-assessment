@@ -1,7 +1,7 @@
 import uuid
+
 from django.db import models
 from django.utils import timezone
-
 from users.models import User
 
 
@@ -20,7 +20,9 @@ class Quiz(models.Model):
     )
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    state = models.CharField(max_length=12, choices=QuizState.choices, default=QuizState.DRAFT)
+    state = models.CharField(
+        max_length=12, choices=QuizState.choices, default=QuizState.DRAFT
+    )
     randomized = models.BooleanField(default=False)
     starts_at = models.DateTimeField(null=True, blank=True)
     ends_at = models.DateTimeField(null=True, blank=True)
@@ -56,18 +58,20 @@ class Question(models.Model):
     class Meta:
         ordering = ["position", "created_at"]
         constraints = [
-            models.UniqueConstraint(fields=["quiz", "position"], name="uq_question_position_per_quiz"),
+            models.UniqueConstraint(
+                fields=["quiz", "position"], name="uq_question_position_per_quiz"
+            ),
         ]
 
     def __str__(self) -> str:
         return self.body[:60]
 
-
     def save(self, *args, **kwargs):
         if not self.position:
             last = (
-                Question.objects.filter(quiz=self.quiz)
-                .aggregate(mx=models.Max("position"))["mx"]
+                Question.objects.filter(quiz=self.quiz).aggregate(
+                    mx=models.Max("position")
+                )["mx"]
                 or 0
             )
             self.position = last + 1
@@ -76,7 +80,9 @@ class Question(models.Model):
 
 class Option(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="options")
+    question = models.ForeignKey(
+        Question, on_delete=models.CASCADE, related_name="options"
+    )
     text = models.CharField(max_length=500)
     correct = models.BooleanField(default=False)
     position = models.PositiveIntegerField(default=0)
@@ -87,8 +93,9 @@ class Option(models.Model):
     def save(self, *args, **kwargs):
         if not self.position:
             last = (
-                Option.objects.filter(question=self.question)
-                .aggregate(mx=models.Max("position"))["mx"]
+                Option.objects.filter(question=self.question).aggregate(
+                    mx=models.Max("position")
+                )["mx"]
                 or 0
             )
             self.position = last + 1
@@ -98,9 +105,13 @@ class Option(models.Model):
 class Membership(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="memberships")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="quiz_memberships")
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="quiz_memberships"
+    )
     active = models.BooleanField(default=True)
-    progress_pct = models.DecimalField(max_digits=5, decimal_places=2, default=0)  # 0..100
+    progress_pct = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0
+    )  # 0..100
     total_score = models.IntegerField(default=0)
     joined_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -119,16 +130,21 @@ class Membership(models.Model):
             Submission.objects.filter(membership=self, correct=True)
             .select_related("question")
             .aggregate(points=models.Sum("question__points"))
-            .get("points") or 0
+            .get("points")
+            or 0
         )
         self.total_score = int(correct_points)
-        self.progress_pct = round(100 * (answered / total_questions), 2) if total_questions else 0
+        self.progress_pct = (
+            round(100 * (answered / total_questions), 2) if total_questions else 0
+        )
         self.save(update_fields=["total_score", "progress_pct", "updated_at"])
 
 
 class Submission(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    membership = models.ForeignKey(Membership, on_delete=models.CASCADE, related_name="submissions")
+    membership = models.ForeignKey(
+        Membership, on_delete=models.CASCADE, related_name="submissions"
+    )
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     option = models.ForeignKey(Option, on_delete=models.CASCADE)
     correct = models.BooleanField(default=False)

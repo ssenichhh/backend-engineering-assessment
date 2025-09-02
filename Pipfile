@@ -4,17 +4,23 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+black = "*"
+pytest = "*"
+pytest-django = "*"
+pytest-factoryboy = "*"
+faker = "*"
+pre-commit = "==3.5.0"
 
 [packages]
 django = "*"
 djangorestframework = "*"
-black = "*"
-drf-writable-nested = "*"
-djangorestframework-simplejwt = "*"
 django-filter = "*"
 django-cors-headers = "*"
+djangorestframework-simplejwt = "*"
 drf-spectacular = "*"
-faker = "*"
+drf-writable-nested = "*"
+psycopg2-binary = "*"
+python-dotenv = "==1.0.1"
 
 [requires]
 python_version = "3.10"

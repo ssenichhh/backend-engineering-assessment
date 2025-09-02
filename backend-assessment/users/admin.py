@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from users.models import User
 
 
@@ -14,4 +13,4 @@ class UserAdmin(admin.ModelAdmin):
         "is_staff",
         "is_superuser",
     )
-    search_fields = ["email"]
+    search_fields = ["email", "first_name", "last_name"]

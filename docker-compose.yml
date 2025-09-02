@@ -1,12 +1,43 @@
-version: '3.5'
+version: "3.5"
 
 services:
   django-backend:
     build:
       context: .
+    platform: linux/amd64
+    working_dir: /usr/src
     ports:
       - "8000:8000"
     volumes:
-        - '.:/usr/src:rw'
+      - .:/usr/src:rw
     command: bash run_command.sh
     env_file: .env
+    environment:
+      PG_HOST: postgres
+      PG_PORT: 5432
+      DEBUG: "True"
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: oper_assessment_postgres
+    image: postgres:16.1
+    ports:
+      - "5434:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_DB: ${PG_NAME}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+    command: >
+      postgres -c shared_preload_libraries=pg_stat_statements
+               -c pg_stat_statements.track=all
+               -c track_io_timing=on
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
