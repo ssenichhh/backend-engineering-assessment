@@ -10,6 +10,7 @@ pytest-django = "*"
 pytest-factoryboy = "*"
 faker = "*"
 pre-commit = "==3.5.0"
+exceptiongroup = "*"
 
 [packages]
 django = "*"
