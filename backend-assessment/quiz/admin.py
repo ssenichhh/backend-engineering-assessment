@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Quiz, Question, Option, Membership, Submission
+
+from .models import Membership, Option, Question, Quiz, Submission
 
 
 class OptionInline(admin.TabularInline):
@@ -28,11 +29,12 @@ class QuestionAdmin(admin.ModelAdmin):
     """
     ВАЖНО: есть search_fields, чтобы его можно было использовать в autocomplete_fields других админов.
     """
+
     inlines = [OptionInline]
     list_display = ("body", "quiz", "position", "points", "shuffle_options")
     list_filter = ("quiz",)
-    search_fields = ("body", "quiz__title")            # ← обязательно для автокомплита
-    autocomplete_fields = ("quiz",)                    # опционально, но удобно
+    search_fields = ("body", "quiz__title")  # ← обязательно для автокомплита
+    autocomplete_fields = ("quiz",)  # опционально, но удобно
 
 
 @admin.register(Option)
@@ -45,7 +47,14 @@ class OptionAdmin(admin.ModelAdmin):
 
 @admin.register(Membership)
 class MembershipAdmin(admin.ModelAdmin):
-    list_display = ("quiz", "user", "active", "progress_pct", "total_score", "joined_at")
+    list_display = (
+        "quiz",
+        "user",
+        "active",
+        "progress_pct",
+        "total_score",
+        "joined_at",
+    )
     list_filter = ("quiz", "active")
     search_fields = ("quiz__title", "user__email")
     autocomplete_fields = ("quiz", "user")

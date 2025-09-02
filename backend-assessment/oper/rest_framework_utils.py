@@ -4,7 +4,6 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 from rest_framework.views import exception_handler
-
 from users.models import User
 
 
@@ -19,7 +18,9 @@ def custom_exception_handler(exc, context):
 
     if response.status_code == HTTP_400_BAD_REQUEST:
         message = "Bad request"
-        if not context["kwargs"].get("message") and hasattr(exc, "default_error_message"):
+        if not context["kwargs"].get("message") and hasattr(
+            exc, "default_error_message"
+        ):
             message = getattr(exc, "default_error_message")
 
         return_data["message"] = message

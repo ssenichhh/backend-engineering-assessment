@@ -1,14 +1,15 @@
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from oper.rest_framework_utils import Serializer
 from rest_framework import serializers
 
-from oper.rest_framework_utils import Serializer
-from .models import Quiz, Question, Option, Membership, Submission
+from .models import Membership, Option, Question, Quiz, Submission
 
 User = get_user_model()
 
 
 # ---- nested create for host ----
+
 
 class OptionWriteSerializer(Serializer, serializers.ModelSerializer):
     class Meta:
@@ -34,6 +35,7 @@ class QuestionWriteSerializer(Serializer, serializers.ModelSerializer):
             option.pop("position", None)
             Option.objects.create(question=question, **option)
         return question
+
 
 class QuizWriteSerializer(Serializer, serializers.ModelSerializer):
     questions = QuestionWriteSerializer(many=True)
@@ -68,7 +70,9 @@ class QuizWriteSerializer(Serializer, serializers.ModelSerializer):
                 Option.objects.create(question=question, **od)
         return quiz
 
+
 # ---- read serializers ----
+
 
 class OptionReadSerializer(Serializer, serializers.ModelSerializer):
     class Meta:
@@ -84,7 +88,7 @@ class QuestionReadSerializer(Serializer, serializers.ModelSerializer):
         fields = ["id", "body", "position", "points", "options"]
 
     def get_options(self, obj):
-        user = self.context["request"].user
+        self.context["request"].user
         qs = obj.options.all()
         if obj.shuffle_options:
             qs = qs.order_by("?")
@@ -110,16 +114,27 @@ class QuizReadSerializer(Serializer, serializers.ModelSerializer):
 
 # ---- membership/progress ----
 
+
 class MembershipSerializer(Serializer, serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     quiz = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Membership
-        fields = ["id", "user", "quiz", "active", "progress_pct", "total_score", "joined_at", "updated_at"]
+        fields = [
+            "id",
+            "user",
+            "quiz",
+            "active",
+            "progress_pct",
+            "total_score",
+            "joined_at",
+            "updated_at",
+        ]
 
 
 # ---- answering ----
+
 
 class SubmitSerializer(Serializer, serializers.Serializer):
     quiz_id = serializers.UUIDField()
@@ -129,17 +144,29 @@ class SubmitSerializer(Serializer, serializers.Serializer):
     def create(self, validated_data):
         user = self.context["request"].user
         quiz = Quiz.objects.get(id=validated_data["quiz_id"])
-        membership = Membership.objects.filter(quiz=quiz, user=user, active=True).first()
+        membership = Membership.objects.filter(
+            quiz=quiz, user=user, active=True
+        ).first()
         if not membership:
-            raise serializers.ValidationError({"detail": "You are not a member of this quiz."})
+            raise serializers.ValidationError(
+                {"detail": "You are not a member of this quiz."}
+            )
 
-        question = Question.objects.filter(id=validated_data["question_id"], quiz=quiz).first()
+        question = Question.objects.filter(
+            id=validated_data["question_id"], quiz=quiz
+        ).first()
         if not question:
-            raise serializers.ValidationError({"detail": "Question not found in this quiz."})
+            raise serializers.ValidationError(
+                {"detail": "Question not found in this quiz."}
+            )
 
-        option = Option.objects.filter(id=validated_data["option_id"], question=question).first()
+        option = Option.objects.filter(
+            id=validated_data["option_id"], question=question
+        ).first()
         if not option:
-            raise serializers.ValidationError({"detail": "Option not found for this question."})
+            raise serializers.ValidationError(
+                {"detail": "Option not found for this question."}
+            )
 
         created = Submission.objects.create(
             membership=membership,
@@ -148,7 +175,9 @@ class SubmitSerializer(Serializer, serializers.Serializer):
             correct=bool(option.correct),
         )
         membership.recalculate()
-        correct_text = question.options.filter(correct=True).values_list("text", flat=True).first()
+        correct_text = (
+            question.options.filter(correct=True).values_list("text", flat=True).first()
+        )
         return {
             "question": question.body,
             "your_answer": option.text,

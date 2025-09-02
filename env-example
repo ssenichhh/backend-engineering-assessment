@@ -1,0 +1,11 @@
+DJANGO_SUPERUSER_PASSWORD="Localsuperus3rsecretpasswhere!"
+DJANGO_SUPERUSER_USERNAME="candidate"
+DJANGO_SUPERUSER_EMAIL="canddiate@example.com"
+
+DEBUG=True
+
+PG_NAME=oper
+PG_USER=postgres
+PG_PASSWORD=postgres
+PG_HOST=postgres
+PG_PORT=5432

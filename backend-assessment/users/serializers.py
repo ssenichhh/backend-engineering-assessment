@@ -1,7 +1,6 @@
 from django.contrib.auth import password_validation
-from rest_framework import serializers
-
 from oper.rest_framework_utils import Serializer
+from rest_framework import serializers
 from users.models import User, UserRole
 
 
@@ -11,11 +10,20 @@ class UserBaseSerializer(Serializer):
 
 class UserLoginSerializer(UserBaseSerializer):
     email = serializers.CharField(
-        allow_blank=False, error_messages={"blank": "Email cannot be blank.", "required": "Email is required."}
+        allow_blank=False,
+        error_messages={
+            "blank": "Email cannot be blank.",
+            "required": "Email is required.",
+        },
     )
     password = serializers.CharField(
-        allow_blank=False, error_messages={"blank": "Password cannot be blank.", "required": "Password is required."}
+        allow_blank=False,
+        error_messages={
+            "blank": "Password cannot be blank.",
+            "required": "Password is required.",
+        },
     )
+
 
 class UserLoginModelSerializer(UserBaseSerializer, serializers.ModelSerializer):
     email = serializers.CharField()
@@ -26,8 +34,6 @@ class UserLoginModelSerializer(UserBaseSerializer, serializers.ModelSerializer):
         user = User.objects.filter(email__iexact=email).first()
         if not user:
             raise serializers.ValidationError("Invalid credentials.")
-        if not user.is_active:
-            raise serializers.ValidationError("User account is disabled.")
         self.instance = user
         return data
 
@@ -35,19 +41,37 @@ class UserLoginModelSerializer(UserBaseSerializer, serializers.ModelSerializer):
         model = User
         fields = ("email", "password")
 
+
 class UserRegisterSerializer(UserBaseSerializer):
     email = serializers.CharField(
-        allow_blank=False, error_messages={"blank": "Email cannot be blank.", "required": "Email is required."}
+        allow_blank=False,
+        error_messages={
+            "blank": "Email cannot be blank.",
+            "required": "Email is required.",
+        },
     )
     password = serializers.CharField(
-        allow_blank=False, error_messages={"blank": "Password cannot be blank.", "required": "Password is required."}
+        allow_blank=False,
+        error_messages={
+            "blank": "Password cannot be blank.",
+            "required": "Password is required.",
+        },
     )
     first_name = serializers.CharField(
-        allow_blank=False, error_messages={"blank": "First name cannot be blank.", "required": "First name is required."}
+        allow_blank=False,
+        error_messages={
+            "blank": "First name cannot be blank.",
+            "required": "First name is required.",
+        },
     )
     last_name = serializers.CharField(
-        allow_blank=False, error_messages={"blank": "Last name cannot be blank.", "required": "Last name is required."}
+        allow_blank=False,
+        error_messages={
+            "blank": "Last name cannot be blank.",
+            "required": "Last name is required.",
+        },
     )
+
 
 class UserRegisterModelSerializer(UserBaseSerializer, serializers.ModelSerializer):
     email = serializers.CharField(write_only=True)
@@ -55,7 +79,7 @@ class UserRegisterModelSerializer(UserBaseSerializer, serializers.ModelSerialize
 
     class Meta:
         model = User
-        fields = [ "first_name", "last_name", "email", "password"]
+        fields = ["first_name", "last_name", "email", "password"]
 
     def validate_email(self, value: str) -> str:
         value = (value or "").strip()
@@ -85,6 +109,3 @@ class UserGenericLoginResponseSerializer(serializers.Serializer):
     first_name = serializers.CharField()
     last_name = serializers.CharField()
     email = serializers.EmailField()
-
-
-
