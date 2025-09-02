@@ -1,4 +1,5 @@
 from django.utils import timezone
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from oper.rest_framework_utils import APIResponse
 from quiz.models import Membership, Quiz, QuizState
 from quiz.permissions import IsOwnerUser, IsParticipantUser
@@ -14,6 +15,14 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 
+@extend_schema_view(
+    list=extend_schema(tags=["quiz"], summary="List quizzes"),
+    retrieve=extend_schema(tags=["quiz"], summary="Get quiz"),
+    create=extend_schema(tags=["quiz"], summary="Create quiz"),
+    update=extend_schema(tags=["quiz"], summary="Update quiz"),
+    partial_update=extend_schema(tags=["quiz"], summary="Patch quiz"),
+    destroy=extend_schema(tags=["quiz"], summary="Delete quiz"),
+)
 class QuizViewSet(viewsets.ModelViewSet):
     queryset = Quiz.objects.all()
     permission_classes = [IsAuthenticated]
@@ -40,6 +49,7 @@ class QuizViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save()
 
+    @extend_schema(tags=["quiz"], summary="Publish quiz")
     @action(
         methods=["post"],
         detail=True,
@@ -58,6 +68,7 @@ class QuizViewSet(viewsets.ModelViewSet):
         quiz.save(update_fields=["state", "starts_at"])
         return APIResponse(data={"state": quiz.state}, status=status.HTTP_200_OK)
 
+    @extend_schema(tags=["quiz"], summary="Close quiz")
     @action(
         methods=["post"],
         detail=True,
@@ -74,6 +85,7 @@ class QuizViewSet(viewsets.ModelViewSet):
         quiz.save(update_fields=["state"])
         return APIResponse(data={"state": quiz.state}, status=status.HTTP_200_OK)
 
+    @extend_schema(tags=["quiz"], summary="Add members")
     @action(
         methods=["post"],
         detail=True,
@@ -91,6 +103,7 @@ class QuizViewSet(viewsets.ModelViewSet):
         data = MembershipSerializer(memberships, many=True).data
         return APIResponse(data=data, status=status.HTTP_201_CREATED)
 
+    @extend_schema(tags=["quiz"], summary="Get progress/dashboard")
     @action(
         methods=["get"],
         detail=True,
@@ -116,6 +129,7 @@ class QuizViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
+    @extend_schema(tags=["quiz"], summary="Submit answer")
     @action(
         methods=["post"],
         detail=True,
