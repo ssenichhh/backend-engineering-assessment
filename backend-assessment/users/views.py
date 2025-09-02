@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from oper.rest_framework_utils import APIResponse, custom_exception_handler
 from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny
@@ -14,6 +15,16 @@ from users.serializers import (
 )
 
 
+@extend_schema(
+    tags=["auth"],
+    summary="Register a new user",
+    description="Register a new user and return its data.",
+    request=UserRegisterSerializer,
+    responses={
+        201: UserRegisterModelSerializer,
+        400: OpenApiResponse(description="Validation error"),
+    },
+)
 class RegisterView(APIView):
     permission_classes = (AllowAny,)
 
@@ -31,6 +42,17 @@ class RegisterView(APIView):
         return APIResponse(data=serializer.data, status=status.HTTP_201_CREATED)
 
 
+@extend_schema(
+    tags=["auth"],
+    summary="Login",
+    description="Login based on user data. "
+    "Returns profile information/tokens (depending on the serializers implementation).",
+    request=UserLoginSerializer,
+    responses={
+        200: UserGenericLoginResponseSerializer,
+        403: OpenApiResponse(description="Invalid credentials"),
+    },
+)
 class LoginView(APIView):
     permission_classes = (AllowAny,)
 

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "948f9031ae7541d18f0258de4b098305cdf3b0225c09397def428cbeded885e3"
+            "sha256": "e3534c06003e15049910344e367e35238b8be586aa7ec033413446cf98e2b6ec"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -85,6 +85,15 @@
             "index": "pypi",
             "markers": "python_version >= '3.7'",
             "version": "==0.28.0"
+        },
+        "drf-spectacular-sidecar": {
+            "hashes": [
+                "sha256:8e80625209b8a23ff27616db305b9ab71c2e2d1069dacd99720a9c11e429af50",
+                "sha256:da2aa45da48fff76de7a1e357b84d1eb0b9df40ca89ec19d5fe94ad1037bb3c8"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.6'",
+            "version": "==2025.9.1"
         },
         "drf-writable-nested": {
             "hashes": [
@@ -525,14 +534,6 @@
             "markers": "python_version >= '3.7'",
             "version": "==1.3.0"
         },
-        "factory-boy": {
-            "hashes": [
-                "sha256:1c39e3289f7e667c4285433f305f8d506efc2fe9c73aaea4151ebd5cdea394fc",
-                "sha256:866862d226128dfac7f2b4160287e899daf54f2612778327dd03d0e2cb1e3d03"
-            ],
-            "markers": "python_version >= '3.8'",
-            "version": "==3.3.3"
-        },
         "faker": {
             "hashes": [
                 "sha256:0f8cc34f30095184adf87c3c24c45b38b33ad81c35ef6eb0a3118f301143012c",
@@ -557,14 +558,6 @@
             ],
             "markers": "python_version >= '3.9'",
             "version": "==2.6.13"
-        },
-        "inflection": {
-            "hashes": [
-                "sha256:1a29730d366e996aaacffb2f1f1cb9593dc38e2ddd30c91250c6dde09ea9b417",
-                "sha256:f38b2b640938a4f35ade69ac3d053042959b62a0f1076a5bbaa1b9526605a8a2"
-            ],
-            "markers": "python_version >= '3.5'",
-            "version": "==0.5.1"
         },
         "iniconfig": {
             "hashes": [
@@ -656,15 +649,6 @@
             "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==4.11.1"
-        },
-        "pytest-factoryboy": {
-            "hashes": [
-                "sha256:2221d48b31b8b8ccaa739c6a162fb50a43a4de6dff6043f249d2807a3462548d",
-                "sha256:91c762cb236bf34b11efdf2e54bafae33114488235621e8b2c4bd9fd77838784"
-            ],
-            "index": "pypi",
-            "markers": "python_version >= '3.9'",
-            "version": "==2.8.1"
         },
         "pyyaml": {
             "hashes": [
